@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký tài khoản</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            background:#f4f6f9;
+        }
+
+        .register-box{
+            width:400px;
+            margin:80px auto;
+            background:white;
+            padding:30px;
+            border-radius:8px;
+            box-shadow:0 0 10px gray;
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            margin:10px 0;
+            box-sizing:border-box;
+        }
+
+        button{
+            width:100%;
+            padding:10px;
+            background:#1b365d;
+            color:white;
+            border:none;
+            cursor:pointer;
+        }
+
+        a{
+            text-decoration:none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="register-box">
+
+<h2>Đăng ký tài khoản</h2>
+
+<input
+type="text"
+id="hoten"
+placeholder="Họ và tên">
+
+<input
+type="email"
+id="email"
+placeholder="Email">
+
+<input
+type="password"
+id="password"
+placeholder="Mật khẩu">
+
+<button onclick="register()">
+Đăng ký
+</button>
+
+<br><br>
+
+<a href="login.html">
+Đã có tài khoản? Đăng nhập
+</a>
+
+</div>
+
+<script>
+
+function register(){
+
+    const HoTen=document.getElementById("hoten").value;
+    const Email=document.getElementById("email").value;
+    const MatKhau=document.getElementById("password").value;
+
+    fetch("/api/register",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+            HoTen,
+            Email,
+            MatKhau
+        })
+
+    })
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+        alert(data.message);
+
+        if(data.success){
+            window.location="login.html";
+        }
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
