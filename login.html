@@ -1,37 +1,140 @@
 <!DOCTYPE html>
-
 <html lang="vi">
-
 <head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập</title>
 
-<meta charset="UTF-8">
+    <style>
+        body{
+            font-family: Arial;
+            background:#f4f6f9;
+        }
 
-<title>Đăng nhập</title>
+        .login-box{
+            width:350px;
+            margin:100px auto;
+            background:white;
+            padding:30px;
+            border-radius:8px;
+            box-shadow:0 0 10px gray;
+        }
 
-<link rel="stylesheet" href="css/style.css">
+        h2{
+            text-align:center;
+        }
 
+        input{
+            width:100%;
+            padding:10px;
+            margin:10px 0;
+            box-sizing:border-box;
+        }
+
+        button{
+            width:100%;
+            padding:10px;
+            background:#1b365d;
+            color:white;
+            border:none;
+            cursor:pointer;
+            font-size:16px;
+        }
+
+        button:hover{
+            background:#274b7a;
+        }
+
+        p{
+            text-align:center;
+        }
+
+        a{
+            text-decoration:none;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="login">
+<div class="login-box">
 
-<h2>Đăng nhập hệ thống</h2>
+    <h2>ĐĂNG NHẬP</h2>
 
-<input type="email" id="email" placeholder="Email">
+    <input
+        type="email"
+        id="email"
+        placeholder="Nhập Email">
 
-<input type="password" id="password" placeholder="Mật khẩu">
+    <input
+        type="password"
+        id="password"
+        placeholder="Nhập mật khẩu">
 
-<button onclick="login()">
+    <button onclick="login()">
+        Đăng nhập
+    </button>
 
-Đăng nhập
-
-</button>
+    <p>
+        Chưa có tài khoản?
+        <a href="register.html">Đăng ký</a>
+    </p>
 
 </div>
 
-<script src="js/login.js"></script>
+<script>
+
+function login(){
+
+    const Email=document.getElementById("email").value;
+
+    const MatKhau=document.getElementById("password").value;
+
+    fetch("/api/login",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+            Email,
+            MatKhau
+        })
+
+    })
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+        if(data.success){
+
+            alert(data.message);
+
+            localStorage.setItem("user",JSON.stringify(data.user));
+
+            if(data.user.MaVaiTro==="ADMIN"){
+
+                window.location="admin.html";
+
+            }else{
+
+                window.location="index.html";
+
+            }
+
+        }else{
+
+            alert(data.message);
+
+        }
+
+    });
+
+}
+
+</script>
 
 </body>
-
 </html>
