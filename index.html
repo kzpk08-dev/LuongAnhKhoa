@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Quản Lý Người Dùng</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f6f9; }
+        h2 { color: #1b365d; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border: 1px solid #d3d3d3; padding: 12px; text-align: center; }
+        th { background-color: #1b365d; color: white; }
+        button { padding: 6px 12px; cursor: pointer; border: none; border-radius: 4px; }
+        .btn-lock { background-color: #dc3545; color: white; }
+        .btn-unlock { background-color: #28a745; color: white; }
+    </style>
+</head>
+<body>
+
+    <h2>TRANG QUẢN TRỊ VIÊN (ADMINISTRATOR)</h2>
+    <h3>Danh sách tài khoản nhân viên trong hệ thống</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Mã ND</th>
+                <th>Họ và Tên</th>
+                <th>Email</th>
+                <th>Vai Trò</th>
+                <th>Trạng Thái</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody id="user-table-body">
+            </tbody>
+    </table>
+
+    <script>
+        // Khi trang web vừa mở lên, tự động gọi API Backend để lấy dữ liệu
+        window.onload = function() {
+            loadUsers();
+        };
+
+        function loadUsers() {
+            // [TS-2.5] Kết nối Frontend đến API Backend /api/users
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(result => {
+                    const tbody = document.getElementById('user-table-body');
+                    tbody.innerHTML = ''; // Xóa dữ liệu cũ (nếu có)
+
+                    // Lặp qua từng người dùng trả về từ Database để vẽ thành dòng trong bảng
+                    result.data.forEach(user => {
+                        const row = `
+                            <tr>
+                                <td>${user.MaND}</td>
+                                <td>${user.HoTen}</td>
+                                <td>${user.Email}</td>
+                                <td>${user.MaVaiTro}</td>
+                                <td><strong>${user.TrangThai}</strong></td>
+                                <td>
+                                    ${user.TrangThai === 'Hoạt động' 
+                                        ? `<button class="btn-lock" onclick="toggleStatus(${user.MaND}, 'Bị khóa')">Khóa tài khoản</button>`
+                                        : `<button class="btn-unlock" onclick="toggleStatus(${user.MaND(), 'Hoạt động'}">Mở khóa</button>`
+                                    }
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                })
+                .catch(error => console.error('Lỗi khi gọi API:', error));
+        }
+
+        // Hàm xử lý khi Admin bấm nút Khóa/Mở khóa tài khoản
+        function toggleStatus(maND, trangThaiMoi) {
+            fetch('/api/users/toggle-status', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ maND: maND, trangThaiMoi: trangThaiMoi })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                loadUsers(); // Tải lại bảng dữ liệu mới sau khi cập nhật thành công
+            });
+        }
+    </script>
+</body>
+</html>
