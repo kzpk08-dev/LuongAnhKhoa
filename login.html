@@ -61,13 +61,13 @@
     <h2>ĐĂNG NHẬP</h2>
 
     <input
-        type="email"
-        id="email"
+        type="Email"
+        id="Email"
         placeholder="Nhập Email">
 
     <input
-        type="password"
-        id="password"
+        type="MatKhau"
+        id="MatKhau"
         placeholder="Nhập mật khẩu">
 
     <button onclick="login()">
@@ -85,9 +85,9 @@
 
 function login(){
 
-    const Email=document.getElementById("email").value;
+    const Email=document.getElementById("Email").value;
 
-    const MatKhau=document.getElementById("password").value;
+    const MatKhau=document.getElementById("MatKhau").value;
 
     fetch("/api/login",{
 
