@@ -39,7 +39,7 @@ app.put('/api/users/toggle-status', (req, res) => {
 
 // Chạy server ở cổng 5000
 app.listen(5000, () => {
-    console.log("Server API đang chạy tại cổng 5000...");
+    console.log("Server chạy tại http://localhost:5000");
 });
 
 // API Đăng ký
