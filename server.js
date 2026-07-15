@@ -41,3 +41,117 @@ app.put('/api/users/toggle-status', (req, res) => {
 app.listen(5000, () => {
     console.log("Server API đang chạy tại cổng 5000...");
 });
+
+// API Đăng ký
+app.post('/api/register', (req, res) => {
+
+    const { HoTen, Email, MatKhau } = req.body;
+
+    if (!HoTen || !Email || !MatKhau) {
+        return res.json({
+            success: false,
+            message: "Vui lòng nhập đầy đủ thông tin."
+        });
+    }
+
+    // Kiểm tra email đã tồn tại chưa
+    const checkSql = "SELECT * FROM NguoiDung WHERE Email = ?";
+
+    db.get(checkSql, [Email], (err, row) => {
+
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                message: err.message
+            });
+        }
+
+        if (row) {
+            return res.json({
+                success: false,
+                message: "Email đã tồn tại!"
+            });
+        }
+
+        // Thêm tài khoản mới
+        const insertSql = `
+        INSERT INTO NguoiDung
+        (HoTen, Email, MatKhau, MaVaiTro, TrangThai)
+        VALUES (?, ?, ?, 'USER', 'Hoạt động')
+        `;
+
+        db.run(insertSql, [HoTen, Email, MatKhau], function(err) {
+
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: err.message
+                });
+            }
+
+            res.json({
+                success: true,
+                message: "Đăng ký thành công!"
+            });
+
+        });
+
+    });
+
+});
+
+// API Đăng nhập
+app.post('/api/login', (req, res) => {
+
+    const { Email, MatKhau } = req.body;
+
+    if (!Email || !MatKhau) {
+        return res.json({
+            success: false,
+            message: "Vui lòng nhập Email và Mật khẩu."
+        });
+    }
+
+    const sql = `
+    SELECT MaND,
+           HoTen,
+           Email,
+           MaVaiTro,
+           TrangThai
+    FROM NguoiDung
+    WHERE Email = ?
+    AND MatKhau = ?
+    `;
+
+    db.get(sql, [Email, MatKhau], (err, row) => {
+
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                message: err.message
+            });
+        }
+
+        if (!row) {
+            return res.json({
+                success: false,
+                message: "Sai Email hoặc mật khẩu."
+            });
+        }
+
+        if (row.TrangThai === "Bị khóa") {
+            return res.json({
+                success: false,
+                message: "Tài khoản đã bị khóa."
+            });
+        }
+
+        res.json({
+            success: true,
+            message: "Đăng nhập thành công.",
+            user: row
+        });
+
+    });
+
+});
