@@ -16,3 +16,12 @@ CREATE TABLE IF NOT EXISTS NguoiDung (
     MaVaiTro TEXT REFERENCES VaiTro(MaVaiTro) DEFAULT 'EMPLOYEE',
     TrangThai TEXT DEFAULT 'Hoạt động'
 );
+
+CREATE TABLE NguoiDung (
+    MaND INTEGER PRIMARY KEY AUTOINCREMENT,
+    HoTen TEXT NOT NULL,
+    Email TEXT UNIQUE NOT NULL,
+    MatKhau TEXT NOT NULL,
+    MaVaiTro TEXT DEFAULT 'USER',
+    TrangThai TEXT DEFAULT 'Hoạt động'
+);
